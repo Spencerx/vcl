@@ -33,4 +33,4 @@
 
 #include "Exception.h"
 #include "Image.h"
-
+#include "Descriptors.h"

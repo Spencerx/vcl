@@ -1,0 +1,22 @@
+
+facebook_path = "/opt/facebook/"
+
+test_env = Environment(CPPPATH= ['/opt/intel/vcl/include/',
+                                 '/opt/intel/vdms/include/',
+                                 '/opt/intel/vdms/utils/include/',
+                                 '../../descriptors/',
+                                 facebook_path ],
+                      CXXFLAGS= "-std=c++11 -O3")
+
+test_env.Program('search_comparison',
+        ['search.cc', '../../descriptors/helpers.cc'],
+        LIBS = [ 'vcl', 'vdms-utils', 'pthread',
+                 'mkl_rt', 'dl', 'm',
+                 ],
+        LIBPATH = ['/usr/local/lib/',
+                   '/opt/intel/vcl/',
+                   '/opt/intel/vdms/utils',
+                   '/opt/facebook/faiss',
+                   '/opt/intel/mkl/lib/intel64/'],
+        LINKFLAGS="-Wl,--no-as-needed",
+        )

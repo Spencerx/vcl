@@ -1,0 +1,53 @@
+
+facebook_path = "/opt/facebook/"
+
+test_env = Environment(CPPPATH= ['/opt/intel/vcl/include/',
+                                 '/opt/intel/vdms/include/',
+                                 facebook_path ],
+                      CXXFLAGS= "-std=c++11 -O3")
+
+faiss_path = facebook_path + "faiss/"
+source_common = ['HybridCNNReader.cc',]
+                 # facebook_path + 'faiss/index_io.cpp', ]
+
+# source_files_1 = ['1-Flat.cpp', source_common]
+
+# test_env.Program('1-flat', source_files_1,
+#         LIBS = [ 'faiss' ],
+#         LIBPATH = ['/usr/local/lib/', faiss_path]
+#         )
+
+# source_files_2 = ['2-IVFFlat.cpp', source_common]
+
+# test_env.Program('2-ivfflat', source_files_2,
+#         LIBS = [ 'faiss' ],
+#         LIBPATH = ['/usr/local/lib/', faiss_path ]
+#         )
+
+# source_files_2 = ['hybrid_index.cc', 'HybridCNNReader.cc']
+
+# test_env.Program('big_main', source_files_2,
+#         LIBS = [ 'tiledb', 'vcl', 'faiss'],
+#         LIBPATH = ['/usr/local/lib/', '../../', '/opt/facebook/faiss']
+#         )
+
+test_env.Program('main',
+        ['main.cc', 'helpers.cc',
+         'add_tests.cc', 'classify_tests.cc'],
+        LIBS = [ 'vcl', 'gtest', 'pthread',
+                 'mkl_rt', 'dl', 'pthread', 'm',
+                 ],
+        LIBPATH = ['/usr/local/lib/', '../../',
+                   '/opt/facebook/faiss',
+                   '/opt/intel/mkl/lib/intel64/'],
+        LINKFLAGS="-Wl,--no-as-needed",
+        )
+
+
+# sample = Environment(CPPPATH= [],
+#                       CXXFLAGS= "-std=c++11 -O3")
+
+# sample.Program('create', ['create.cc'],
+#         LIBS = [ 'tiledb'],
+#         LIBPATH = ['/usr/local/lib/']
+#         )
