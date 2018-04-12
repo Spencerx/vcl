@@ -25,7 +25,11 @@ TEST(DESCRIPTORS, classify_flatl2_4d)
     int offset = 10;
     std::vector<long> classes = classes_increasing_offset(nb, offset);
 
-    index.add(xb, nb, classes);
+    for (int i = 0; i < nb; ++i) {
+        // adding one by one
+        index.add(xb + d*i, 1, &classes.at(i));
+    }
+    // index.add(xb, nb, classes);
 
     std::vector<float> distances;
     std::vector<long> desc_ids;

@@ -66,7 +66,7 @@ namespace VCL {
          *  @param set_path  Full Path to the collection folder
          */
         Descriptors(const std::string& set_path,
-                    DescriptorsEngine eng = FaissIVFFlatL2);
+                    DescriptorsEngine eng = FaissFlatL2);
         // TODO CHANGE THE DEFAULTS.
 
         /**
@@ -251,6 +251,16 @@ namespace VCL {
          *  @return vector with the string labels
          */
         std::map<long, std::string> get_labels();
+
+        /**
+         *  Get the label of the descriptors for the spcified ids.
+         *  NOTE: This is a vector becase this is what we return.
+         *  We can, make wrapper functions that recieve arrays as well.
+         *
+         *  @param ids  vector of ids
+         *  @return vector with the string labels
+         */
+        long get_label_id(const std::string& label);
 
         /**
          *  Get the label of the descriptors for the spcified ids.

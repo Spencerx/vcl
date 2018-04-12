@@ -128,6 +128,25 @@ std::map<long, std::string> Descriptors::get_labels()
     return _descriptors->get_labels();
 }
 
+long Descriptors::get_label_id(const std::string& label)
+{
+    // TODO THERE SHOULD BE A LOCK HERE.
+    auto map = _descriptors->get_labels();
+
+    for (auto it = map.begin(); it != map.end(); ++it ) {
+        if (it->second == label) {
+            // cache[label] = it->first;
+            return it->first;
+        }
+    }
+
+    long id = map.size();
+    map[id] = label;
+    _descriptors->set_labels(map);
+
+    return id;
+}
+
 std::vector<std::string> Descriptors::get_labels(std::vector<long>& ids)
 {
     return _descriptors->get_labels(ids.data(), ids.size());

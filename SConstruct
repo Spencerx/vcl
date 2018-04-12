@@ -2,16 +2,17 @@
 
 env = Environment(CPPPATH=['include', 'src',
                            '/opt/facebook/',
-                           '/opt/intel/mkl/include/',
+                           # '/opt/intel/mkl/include/',
                            '/usr/local/include/'],
                   CXXFLAGS="-std=c++11 -O3 -fopenmp")
 
 source_files = [
-                'src/Image.cc',
-                'src/ImageData.cc', 'src/TDBObject.cc',
-                'src/TDBImage.cc',
-                'src/Exception.cc',
                 'src/utils.cc',
+                'src/Exception.cc',
+                'src/Image.cc',
+                'src/ImageData.cc',
+                'src/TDBImage.cc',
+                'src/TDBObject.cc',
                 'src/Descriptors.cc',
                 'src/DescriptorsData.cc',
                 'src/DescriptorsFaiss.cc',
@@ -27,12 +28,12 @@ env.SharedLibrary('libvcl.so', source_files,
              'opencv_imgcodecs',
              'gomp',
              'faiss',
-             'mkl_rt', 'dl', 'pthread', 'm',
+             # 'mkl_rt', 'dl', 'pthread', 'm',
              ],
 
     LIBPATH = ['/usr/local/lib', '/usr/lib',
                '/opt/facebook/faiss/',
-               '/opt/intel/mkl/lib/intel64/',
+               # '/opt/intel/mkl/lib/intel64/',
                ],
 
     LINKFLAGS="-Wl,--no-as-needed",
@@ -52,11 +53,11 @@ env.Program('test/unit_test', gtest_source,
                 , 'opencv_imgcodecs'
                 , 'opencv_highgui'
                 , 'opencv_imgproc'
-                , 'mkl_rt', 'dl', 'pthread', 'm',
+                # , 'mkl_rt', 'dl', 'pthread', 'm',
         ],
         LIBPATH = ['.', '/usr/local/lib', '/usr/lib',
                '/opt/facebook/faiss/',
-               '/opt/intel/mkl/lib/intel64/',
+               # '/opt/intel/mkl/lib/intel64/',
                ])
 
 

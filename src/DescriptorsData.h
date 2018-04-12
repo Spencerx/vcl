@@ -39,6 +39,8 @@
 #include <fstream>
 #include <map>
 
+#include <dirent.h>
+
 namespace VCL {
 
     class DescriptorsData {
@@ -54,6 +56,14 @@ namespace VCL {
                 f.close();
                 return true;
             }
+            return false;
+        }
+
+        inline bool dir_exist(const std::string& dir_name) {
+            DIR* dir = opendir(dir_name.c_str());
+            if (dir)
+                return true;
+
             return false;
         }
 

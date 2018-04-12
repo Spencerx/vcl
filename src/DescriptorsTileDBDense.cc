@@ -13,7 +13,6 @@ using namespace VCL;
 DescriptorsTileDBDense::DescriptorsTileDBDense(const std::string &filename):
     DescriptorsTileDB(filename),
     _flag_buffer_updated(false)
-
 {
     std::vector<float> metadata(2);
 

@@ -17,7 +17,7 @@
 using namespace VCL;
 
 DescriptorsFaiss::DescriptorsFaiss(const std::string &set_path):
-    DescriptorsData(set_path, 0)
+    DescriptorsData(set_path)
 {
     _faiss_file = _set_path + "/index.faiss";
     read_maps();
@@ -125,24 +125,14 @@ void DescriptorsFaiss::add(float* descriptors, unsigned n, long* labels)
     }
 
     if (labels != NULL) {
-        // _ids_vec.resize(_ids_vec.size() + n);
-        // std::memcpy(_ids_vec.data()+_ids_vec.size(), labels, n * sizeof(long));
-        for (int i = 0; i < n; ++i) {
-            _ids_vec.push_back(labels[i]);
-        }
+        // printf("n: %d, total: %ld\n", 1, _index->ntotal);
+        _ids_vec.resize(_index->ntotal + n);
+        long* dst = _ids_vec.data() + _index->ntotal;
+        std::memcpy(dst, labels, n * sizeof(long));
+        // for (int i = 0; i < n; ++i) {
+        //     _ids_vec.push_back(labels[i]);
+        // }
     }
-
-    // if (labels.size() > 0) {
-    //     for (auto& str_label : labels) {
-    //         // This is 0(1) compared to a search (0(log n))
-    //         long& label_id = _labels_map[str_label];
-    //         if (label_id == 0) {
-    //             label_id = _labels_vec.size();
-    //             _labels_vec.push_back(str_label);
-    //         }
-    //         _ids_vec.push_back(label_id);
-    //     }
-    // }
 
     _index->add(n, descriptors);
     _lock.unlock();
@@ -207,13 +197,17 @@ void DescriptorsFaiss::classify(float* descriptors, unsigned n, long* ids)
             long idx = ids_aux[quorum*j + i];
             if (idx < 0) continue; // Means not found
 
+            assert(idx < _ids_vec.size());
             long label_id = _ids_vec.at(idx);
+            // printf("idx: %ld\n", idx);
+            // printf("label_id: %ld\n", label_id);
             map_voting[label_id] += 1;
             if (max < map_voting[label_id]) {
                 max = map_voting[label_id];
                 winner = label_id;
             }
         }
+        // printf("winner: %ld\n", winner);
         ids[j] = winner;
     }
     _lock.unlock();
@@ -221,12 +215,16 @@ void DescriptorsFaiss::classify(float* descriptors, unsigned n, long* ids)
 
 std::vector<std::string> DescriptorsFaiss::get_labels(long* ids, unsigned n)
 {
-    flush_buffers();
+    // flush_buffers();
     _lock.lock();
     std::vector<std::string> ret_labels(n);
 
     for (int i = 0; i < n; ++i) {
-        ret_labels[i] = _labels_map[_ids_vec[ids[i]]];
+        long idx = ids[i];
+        if (idx > _ids_vec.size()){
+            throw VCLException(ObjectNotFound, "Label id does not exists");
+        }
+        ret_labels[i] = _labels_map[_ids_vec[idx]];
     }
     _lock.unlock();
 
@@ -287,9 +285,10 @@ DescriptorsFaissFlatL2::DescriptorsFaissFlatL2(const std::string &set_path):
     DescriptorsFaiss(set_path)
 {
     if (file_exist(_faiss_file)){
-        _index = (faiss::IndexFlatL2*)faiss::read_index(_set_path.c_str());
-        if (!_index)
-            std::cout << "Problem reading: " << _faiss_file << std::endl;
+        _index = (faiss::IndexFlatL2*)faiss::read_index(_faiss_file.c_str());
+        if (!_index) {
+            throw VCLException(OpenFailed, "Problem reading: " + _faiss_file);
+        }
 
         _dimensions = _index->d;
     }
@@ -308,18 +307,6 @@ DescriptorsFaissFlatL2::DescriptorsFaissFlatL2(const std::string &set_path, unsi
         _index = new faiss::IndexFlatL2(_dimensions);
     }
 }
-
-// void DescriptorsFaissFlatL2::add(float* descriptors, unsigned n_descriptors,
-//         std::vector<std::string>& classes)
-// {
-//     if (classes.size() > 0 ){
-//         std::cout << "DescriptorsFaissFlatL2:: warning, ignoring classes"
-//                   << std::endl;
-//         return;
-//     }
-
-//     _index->add(n_descriptors, descriptors);
-// }
 
 // DescriptorsFaissIVFFlatL2
 
@@ -348,7 +335,6 @@ DescriptorsFaissIVFFlatL2::DescriptorsFaissIVFFlatL2(const std::string &set_path
         throw VCLException(OpenFailed, set_path + " already exists");
     }
     else{
-        // std::cout << "Creating...\n" << std::endl;
         faiss::IndexFlatL2* quantizer = new faiss::IndexFlatL2(_dimensions);
 
         // TODO revise nlist param
@@ -356,5 +342,7 @@ DescriptorsFaissIVFFlatL2::DescriptorsFaissIVFFlatL2(const std::string &set_path
         _index = new faiss::IndexIVFFlat(quantizer, _dimensions,
                                          nlist, faiss::METRIC_L2);
                                          // call constructor
+
+        _dimensions = _index->d;
     }
 }

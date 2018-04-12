@@ -1,5 +1,5 @@
 cd ../../../ && scons -j123
-cd test/benchmarks/descriptors
+cd test/descriptors/benchmarks
 
 scons -j123
 rm -r dbs

@@ -32,18 +32,25 @@
 */
 
 #include "DescriptorsData.h"
+#include "Exception.h"
 
 using namespace VCL;
 
 DescriptorsData::DescriptorsData(const std::string &set_path):
     _set_path(set_path)
 {
+    if (!dir_exist(set_path)) {
+        throw VCLException(OpenFailed, "File does not exists");
+    }
 }
 
 DescriptorsData::DescriptorsData(const std::string &set_path, uint32_t dim):
     _set_path(set_path),
     _dimensions(dim)
 {
+    if (dir_exist(set_path)) {
+        throw VCLException(OpenFailed, "File already exists");
+    }
 }
 
 DescriptorsData::~DescriptorsData()

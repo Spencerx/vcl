@@ -4,7 +4,15 @@
 #include <iomanip>
 #include <cmath>
 
+#define USE_COMPUTE_OMP
+
+#ifndef USE_COMPUTE_OMP
+#define USE_COMPUTE_MKL
+#endif
+
+#ifdef USE_COMPUTE_MKL
 #include "mkl.h" // INTEL MKL
+#endif
 
 #include "DescriptorsTileDB.h"
 
@@ -39,8 +47,6 @@ void DescriptorsTileDB::compute_distances(float* q,
     size_t n = data.size() / _dimensions;
 
     float* sub = new float[_dimensions * n];
-
-#define USE_COMPUTE_MKL
 
 #ifdef USE_COMPUTE_MKL
 
