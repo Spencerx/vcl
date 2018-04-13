@@ -41,24 +41,24 @@ env.SharedLibrary('libvcl.so', source_files,
 
 ## Compile and Run Tests ##
 
-gtest_source = ['test/unit_tests/main_test.cc'
-         , 'test/unit_tests/TDBImage_test.cc'
-         , 'test/unit_tests/ImageData_test.cc'
-         ,'test/unit_tests/Image_test.cc'
-]
+# gtest_source = ['test/unit_tests/main_test.cc'
+#          , 'test/unit_tests/TDBImage_test.cc'
+#          , 'test/unit_tests/ImageData_test.cc'
+#          ,'test/unit_tests/Image_test.cc'
+# ]
 
-env.Program('test/unit_test', gtest_source,
-        LIBS = ['vcl', 'gtest', 'pthread'
-                ,'opencv_core'
-                , 'opencv_imgcodecs'
-                , 'opencv_highgui'
-                , 'opencv_imgproc'
-                # , 'mkl_rt', 'dl', 'pthread', 'm',
-        ],
-        LIBPATH = ['.', '/usr/local/lib', '/usr/lib',
-               '/opt/facebook/faiss/',
-               # '/opt/intel/mkl/lib/intel64/',
-               ])
+# env.Program('test/unit_test', gtest_source,
+#         LIBS = ['vcl', 'gtest', 'pthread'
+#                 ,'opencv_core'
+#                 , 'opencv_imgcodecs'
+#                 , 'opencv_highgui'
+#                 , 'opencv_imgproc'
+#                 # , 'mkl_rt', 'dl', 'pthread', 'm',
+#         ],
+#         LIBPATH = ['.', '/usr/local/lib', '/usr/lib',
+#                '/opt/facebook/faiss/',
+#                # '/opt/intel/mkl/lib/intel64/',
+#                ])
 
 
 # # Compile and Run Tests ##

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <cstring>
 
 #include "DescriptorsTileDB.h"
 
